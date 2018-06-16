@@ -3,25 +3,13 @@
 #include <climits>
 #include <stdlib.h> 
 #include <vector>
-#include <cudnn.h>
-#include <cuda.h>
+#include "cuda.h"
+
 
 using namespace std;
 using namespace cv;
 
-#define checkCUDNN(expression)                               \
-  {                                                          \
-    cudnnStatus_t status = (expression);                     \
-    if (status != CUDNN_STATUS_SUCCESS) {                    \
-      std::cout << "Error on line " << __LINE__ << ": "      \
-                << cudnnGetErrorString(status) << std::endl; \
-      std::exit(EXIT_FAILURE);                               \
-    }\
-	else \
-	{\
-		std::cout << "OK" << endl; \
-	}\
-  }
+
 
 cv::Mat load_image(const char* image_path) {
 	cv::Mat image = cv::imread(image_path, CV_LOAD_IMAGE_COLOR);
