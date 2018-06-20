@@ -36,6 +36,9 @@
     <ClCompile Include="cuda.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Conv_Layer_GPU.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CNN.h">
@@ -54,6 +57,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="cuda.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TensorDimension.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Conv_Layer_GPU.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

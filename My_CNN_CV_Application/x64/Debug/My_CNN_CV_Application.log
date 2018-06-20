@@ -1,6 +1,8 @@
-﻿  cuda.cpp
+﻿  Conv_Layer_GPU.cpp
   Generating Code...
   Skipping... (no relevant changes detected)
-  main.cpp
+  Tensor.cpp
+  Layer.cpp
+  Conv_Layer.cpp
   My_CNN_CV_Application.vcxproj -> D:\Faks\Magisterij\Mag_delo\Aplikacija\My_CNN_CV_Application\x64\Debug\My_CNN_CV_Application.exe
   My_CNN_CV_Application.vcxproj -> D:\Faks\Magisterij\Mag_delo\Aplikacija\My_CNN_CV_Application\x64\Debug\My_CNN_CV_Application.pdb (Full PDB)

@@ -18,8 +18,15 @@ cv::Mat load_image(const char* image_path) {
 	return image;
 }
 
+void Test(float* a) {
+	printf("%f", *a);
+}
+
 int main(int, char** argv)
 {
+	float ptest = 1;
+	Test(&ptest);
+
 	cudnnHandle_t cudnn;
 	cudnnCreate(&cudnn);
 	checkCUDNN(cudnnCreate(&cudnn));
@@ -36,7 +43,8 @@ int main(int, char** argv)
 		return -1;
 	}
 	Mat myBlob = cv::dnn::blobFromImage(src, 1,cv::Size(244, 244), cv::Scalar(0, 0, 0), true, false);
-
+	float * myBlobF = myBlob.ptr<float>();
+	//cudnn
 	cudnnTensorDescriptor_t input_descriptor;
 	checkCUDNN(cudnnCreateTensorDescriptor(&input_descriptor));
 	checkCUDNN(cudnnSetTensor4dDescriptor(input_descriptor,
@@ -68,6 +76,7 @@ int main(int, char** argv)
 		/*kernel_width=*/3));
 
 	cudnnConvolutionDescriptor_t convolution_descriptor;
+
 	checkCUDNN(cudnnCreateConvolutionDescriptor(&convolution_descriptor));
 	checkCUDNN(cudnnSetConvolution2dDescriptor(convolution_descriptor,
 		/*pad_height=*/1,
@@ -96,7 +105,7 @@ int main(int, char** argv)
 		kernel_descriptor,
 		convolution_descriptor,
 		output_descriptor,
-		convolution_algorithm,
+		CUDNN_CONVOLUTION_FWD_ALGO_IMPLICIT_PRECOMP_GEMM,
 		&workspace_bytes));
 	std::cerr << "Workspace size: " << (workspace_bytes / 1048576.0) << "MB"
 		<< std::endl;
@@ -108,7 +117,7 @@ int main(int, char** argv)
 
 	float* d_input{ nullptr };
 	cudaMalloc(&d_input, image_bytes);
-	cudaMemcpy(d_input, myBlob.ptr<float>(0), image_bytes, cudaMemcpyHostToDevice);
+	cudaMemcpy(d_input, myBlobF, image_bytes, cudaMemcpyHostToDevice);
 
 	float* d_output{ nullptr };
 	cudaMalloc(&d_output, image_bytes);

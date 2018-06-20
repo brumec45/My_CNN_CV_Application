@@ -155,6 +155,7 @@
   <ItemGroup>
     <ClCompile Include="CNN.cpp" />
     <ClCompile Include="Conv_Layer.cpp" />
+    <ClCompile Include="Conv_Layer_GPU.cpp" />
     <ClCompile Include="cuda.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="main.cpp" />
@@ -164,10 +165,12 @@
   <ItemGroup>
     <ClInclude Include="CNN.h" />
     <ClInclude Include="Conv_Layer.h" />
+    <ClInclude Include="Conv_Layer_GPU.h" />
     <ClInclude Include="cuda.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="MaxPool_Layer.h" />
     <ClInclude Include="Tensor.h" />
+    <ClInclude Include="TensorDimension.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
