@@ -1,8 +1,5 @@
 #include <omp.h>
 #include <opencv2/opencv.hpp>
-#include <climits>
-#include <stdlib.h> 
-#include <vector>
 #include "cuda.h"
 
 
