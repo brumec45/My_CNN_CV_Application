@@ -1,34 +1,22 @@
-#include <omp.h>
-#include <opencv2/opencv.hpp>
 #include "cuda.h"
-
+#include "ImageInput.h"
+#include "CNN.h"
 
 using namespace std;
-using namespace cv;
 
 
-
-cv::Mat load_image(const char* image_path) {
-	cv::Mat image = cv::imread(image_path, CV_LOAD_IMAGE_COLOR);
-	image.convertTo(image, CV_32FC3);
-	cv::normalize(image, image, 0, 1, cv::NORM_MINMAX);
-	return image;
-}
-
-void Test(float* a) {
-	printf("%f", *a);
-}
 
 int main(int, char** argv)
 {
-	float ptest = 1;
-	Test(&ptest);
+	
+	CNN* cnn = new CNN();
+	cnn->InitCNN();
 
 	cudnnHandle_t cudnn;
 	cudnnCreate(&cudnn);
 	checkCUDNN(cudnnCreate(&cudnn));
 	
-	Mat src = load_image("more_of_lenna.jpg");
+	Mat src = LoadImage("more_of_lenna.jpg");
 	//cv::resize(src, src, cv::Size(244, 244));
 
 	//cv::resize(src, image, cv::Size(512, 512));

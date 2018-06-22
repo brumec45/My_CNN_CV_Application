@@ -4,11 +4,12 @@ Layer::Layer()
 {
 }
 
-Layer::Layer(Tensor inputTensor, Tensor outputTensor)
+Layer::Layer(Tensor *inputTensor, Tensor *outputTensor)
 {
 	this->inputTensor = inputTensor;
 	this->outputTensor = outputTensor;
 }
+
 
 void Layer::SetPreviousLayer(Layer * previousLayer)
 {
@@ -20,12 +21,12 @@ void Layer::SetNextLayer(Layer * nextLayer)
 	this->nextLayer = nextLayer;
 }
 
-Tensor Layer::GetInputTensor()
+Tensor* Layer::GetInputTensor()
 {
 	return this->outputTensor;
 }
 
-Tensor Layer::GetOutputTensor()
+Tensor* Layer::GetOutputTensor()
 {
 	return this->inputTensor;
 }

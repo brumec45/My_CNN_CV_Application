@@ -11,13 +11,20 @@ private:
 	cudnnConvolutionDescriptor_t cudnnConvDesc;
 
 	size_t forwardWorkspaceBytes = 0;
-	int layerOutputBytes = 0, layerKernelBytes = 0;
+	int layerInputBytes = 0, layerOutputBytes = 0, layerKernelBytes = 0;
 	//Vsaka plast ima v GPU rezerviran spomin
-	float *forwardWorkspaceGPUMemoryPointer = nullptr, *kernelGPUMemoryPointer = nullptr, *outputGPUMemoryPointer = nullptr;
+	float* forwardWorkspaceGPUMemoryPointer = nullptr, *inputGPUMemoryPointer = nullptr,
+		*kernelGPUMemoryPointer = nullptr, *outputGPUMemoryPointer = nullptr;
+	
 public:
 	Conv_Layer_GPU();
-	Conv_Layer_GPU(Tensor inputTensor, Tensor outputTensor, Tensor kernelTensor);
-	void SetupCUDNN();
+	Conv_Layer_GPU(Tensor *inputTensor, Tensor *outputTensor, Tensor *kernelTensor);
+
+	void SetupCUDNN(bool firstLayer);
+	void Forward();
+	void SetInputData(float* inputData);
+
 	//Za naslednjo plast input
-	float * GetOutputGPUMemoryPointer();
+	float* GetOutputGPUMemoryPointer();
+	float* GetLayerOutputData();
 };

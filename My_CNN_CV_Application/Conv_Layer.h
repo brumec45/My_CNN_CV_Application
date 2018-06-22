@@ -2,8 +2,8 @@
 #include "Layer.h"
 class Conv_Layer: public Layer {
 protected:
-	Tensor kernelTensor;
+	Tensor *kernelTensor;
 public:
 	Conv_Layer();
-	Conv_Layer(Tensor inputTensor, Tensor outputTensor, Tensor kernelTensor);
+	Conv_Layer(Tensor *inputTensor, Tensor *outputTensor, Tensor *kernelTensor);
 };

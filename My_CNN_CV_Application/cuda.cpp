@@ -5,11 +5,12 @@ void checkCUDNN(cudnnStatus_t status)
       if (status != CUDNN_STATUS_SUCCESS) {                    
       std::cout << "Error on line " << __LINE__ << ": "      
                 << cudnnGetErrorString(status) << std::endl; 
+	  std::getchar();
       std::exit(EXIT_FAILURE);        
 	  
     }
-	else 
+	/*else 
 	{
 		std::cout << "OK" << std::endl; 
-	}
+	}*/
   }

@@ -5,4 +5,7 @@ struct TensorDimension
 	int channels;
 	int height;
 	int width;
+
+	TensorDimension();
+	TensorDimension(int batchDimension, int channels, int height, int width);
 };
