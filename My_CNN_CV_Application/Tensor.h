@@ -11,7 +11,7 @@ public:
 	Tensor();
 	Tensor(const TensorDimension &tensorDimension);
 	void InitKernelWeights();
-	void SetTensorData(float * tensor);
+	void SetTensorData(float * tensorData);
 	void SetTensorDimension(const TensorDimension &tensorDimension);
 	float* GetTensorData();
 	int GetBatchDimension();

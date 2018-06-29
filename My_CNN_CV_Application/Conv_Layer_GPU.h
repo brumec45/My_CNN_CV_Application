@@ -1,30 +1,24 @@
 #pragma once
-#include "Conv_Layer.h"
+#include "Layer_GPU.h"
 #include "cuda.h"
 
-class Conv_Layer_GPU : public Conv_Layer {
+class Conv_Layer_GPU : public Layer_GPU {
 private:
-	cudnnHandle_t                cudnnHandle;
-	cudnnTensorDescriptor_t	     cudnnInputDesc;
+	Tensor *kernelTensor;
+
 	cudnnFilterDescriptor_t	     cudnnKernelDesc;
-	cudnnTensorDescriptor_t	     cudnnOutputDesc;
 	cudnnConvolutionDescriptor_t cudnnConvDesc;
 
-	size_t forwardWorkspaceBytes = 0;
-	int layerInputBytes = 0, layerOutputBytes = 0, layerKernelBytes = 0;
+	int layerKernelBytes = 0;
 	//Vsaka plast ima v GPU rezerviran spomin
-	float* forwardWorkspaceGPUMemoryPointer = nullptr, *inputGPUMemoryPointer = nullptr,
-		*kernelGPUMemoryPointer = nullptr, *outputGPUMemoryPointer = nullptr;
-	
+	float *kernelGPUMemoryPointer = nullptr;
+
+	void SetupCUDNN_Convolution();
+	void AllocateCUDAMemory_Convolution();
 public:
 	Conv_Layer_GPU();
 	Conv_Layer_GPU(Tensor *inputTensor, Tensor *outputTensor, Tensor *kernelTensor);
 
 	void SetupCUDNN(bool firstLayer);
 	void Forward();
-	void SetInputData(float* inputData);
-
-	//Za naslednjo plast input
-	float* GetOutputGPUMemoryPointer();
-	float* GetLayerOutputData();
 };

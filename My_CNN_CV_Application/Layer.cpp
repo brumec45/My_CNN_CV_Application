@@ -23,10 +23,10 @@ void Layer::SetNextLayer(Layer * nextLayer)
 
 Tensor* Layer::GetInputTensor()
 {
-	return this->outputTensor;
+	return this->inputTensor;
 }
 
 Tensor* Layer::GetOutputTensor()
 {
-	return this->inputTensor;
+	return this->outputTensor;
 }

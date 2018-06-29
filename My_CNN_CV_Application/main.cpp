@@ -83,7 +83,7 @@ int main(int, char** argv)
 			CUDNN_CONVOLUTION_FWD_PREFER_FASTEST,
 			/*memoryLimitInBytes=*/0,
 			&convolution_algorithm));
-
+	
 	size_t workspace_bytes = 0;
 	checkCUDNN(cudnnGetConvolutionForwardWorkspaceSize(cudnn,
 		input_descriptor,

@@ -159,8 +159,10 @@
     <ClCompile Include="cuda.cpp" />
     <ClCompile Include="ImageInput.cpp" />
     <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="Layer_GPU.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MaxPool_Layer.cpp" />
+    <ClCompile Include="MaxPool_Layer_GPU.cpp" />
     <ClCompile Include="Tensor.cpp" />
     <ClCompile Include="TensorDimension.cpp" />
   </ItemGroup>
@@ -171,7 +173,9 @@
     <ClInclude Include="cuda.h" />
     <ClInclude Include="ImageInput.h" />
     <ClInclude Include="Layer.h" />
+    <ClInclude Include="Layer_GPU.h" />
     <ClInclude Include="MaxPool_Layer.h" />
+    <ClInclude Include="MaxPool_Layer_GPU.h" />
     <ClInclude Include="Tensor.h" />
     <ClInclude Include="TensorDimension.h" />
   </ItemGroup>
