@@ -6,8 +6,10 @@ Tensor::Tensor()
 
 Tensor::Tensor(const TensorDimension &tensorDimension)
 {
-	this->tensorData = new float[tensorDimension.batchDimension * tensorDimension.channels * tensorDimension.height * tensorDimension.width];
+	this->tensorSize = tensorDimension.batchDimension * tensorDimension.channels * tensorDimension.height * tensorDimension.width;
+	this->tensorData = new float[this->tensorSize];
 	this->tensorDimension = tensorDimension;
+
 }
 
 void Tensor::InitKernelWeights()
@@ -19,7 +21,7 @@ void Tensor::InitKernelWeights()
 		{ 1, -8, 1 },
 		{ 1,  1, 1 }
 	};
-
+	
 	int kernel2DSize = this->tensorDimension.height *
 		this->tensorDimension.width;
 
@@ -42,7 +44,6 @@ void Tensor::InitKernelWeights()
 			}
 		}
 	}
-
 }
 
 
@@ -81,4 +82,9 @@ int Tensor::GetHeight()
 int Tensor::GetWidth()
 {
 	return this->tensorDimension.width;
+}
+
+int Tensor::GetTensorSize()
+{
+	return this->tensorSize;
 }

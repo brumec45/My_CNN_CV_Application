@@ -18,6 +18,7 @@ void Conv_Layer_GPU::SetupCUDNN(bool firstLayer)
 	SetupCUDNN_Convolution();
 	AllocateCUDAMemory_InputOutput(firstLayer);
 	AllocateCUDAMemory_Convolution();
+	
 }
 
 void Conv_Layer_GPU::SetupCUDNN_Convolution()
@@ -77,6 +78,9 @@ void Conv_Layer_GPU::Forward()
 		&beta,
 		cudnnOutputDesc,
 		this->outputGPUMemoryPointer));
+	
+	LeakyRELUActivation(this->outputGPUMemoryPointer, this->outputTensor->GetTensorSize());
+	checkCUDA(cudaPeekAtLastError());
 }
 
 

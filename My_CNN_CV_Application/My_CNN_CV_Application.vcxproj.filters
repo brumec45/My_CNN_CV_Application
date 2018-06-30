@@ -36,9 +36,6 @@
     <ClCompile Include="cuda.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Conv_Layer_GPU.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ImageInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -49,6 +46,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Layer_GPU.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Conv_Layer_GPU.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -86,5 +86,13 @@
     <ClInclude Include="Layer_GPU.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="Leaky_RELU_Activation_Kernel.cuh">
+      <Filter>Header Files</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Leaky_RELU_Activation_Kernel.cu">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>

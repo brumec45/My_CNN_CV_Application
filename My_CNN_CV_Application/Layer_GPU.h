@@ -1,6 +1,7 @@
 #pragma once
 #include "Layer.h"
 #include "cuda.h"
+#include "Leaky_RELU_Activation_Kernel.cuh"
 
 class Layer_GPU : public Layer {
 protected:

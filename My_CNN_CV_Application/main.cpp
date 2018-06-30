@@ -1,6 +1,7 @@
 #include "cuda.h"
 #include "ImageInput.h"
 #include "CNN.h"
+#include "Leaky_RELU_Activation_Kernel.cuh"
 
 using namespace std;
 
@@ -8,7 +9,8 @@ using namespace std;
 
 int main(int, char** argv)
 {
-	
+	//CUDADeviceInfo();
+
 	CNN* cnn = new CNN();
 	cnn->InitCNN();
 

@@ -53,6 +53,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 9.2.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -179,7 +180,16 @@
     <ClInclude Include="Tensor.h" />
     <ClInclude Include="TensorDimension.h" />
   </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="Leaky_RELU_Activation_Kernel.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
+    <CudaCompile Include="Leaky_RELU_Activation_Kernel.cuh">
+      <FileType>Document</FileType>
+    </CudaCompile>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 9.2.targets" />
   </ImportGroup>
 </Project>

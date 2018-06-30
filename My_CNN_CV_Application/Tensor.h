@@ -5,6 +5,7 @@
 class Tensor {
 private:
 	float * tensorData = nullptr;
+	int tensorSize;
 	TensorDimension tensorDimension;
 	
 public:
@@ -18,4 +19,5 @@ public:
 	int GetChannels();
 	int GetHeight();
 	int GetWidth();
+	int GetTensorSize();
 };

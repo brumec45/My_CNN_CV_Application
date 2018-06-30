@@ -1,6 +1,5 @@
 #pragma once
 #include "Layer_GPU.h"
-#include "cuda.h"
 
 class Conv_Layer_GPU : public Layer_GPU {
 private:

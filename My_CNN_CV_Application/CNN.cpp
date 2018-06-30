@@ -40,6 +40,11 @@ void CNN::InitCNN()
 	
 
 	float* outputData = this->layers[this->layers.size() - 1]->GetLayerOutputData();
+	/*std::vector<float>testV;
+	for (size_t i = 0; i < this->layers[0]->GetOutputTensor()->GetTensorSize(); i++)
+	{
+		testV.push_back(outputData[i]);
+	}*/
 
 	Mat result(outputSize, outputSize, CV_32FC1);
 	//float* resultP = result.
