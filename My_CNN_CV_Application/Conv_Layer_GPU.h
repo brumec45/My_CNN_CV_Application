@@ -16,7 +16,7 @@ private:
 	void AllocateCUDAMemory_Convolution();
 public:
 	Conv_Layer_GPU();
-	Conv_Layer_GPU(Tensor *inputTensor, Tensor *outputTensor, Tensor *kernelTensor);
+	Conv_Layer_GPU(Tensor *inputTensor, Tensor *outputTensor, Tensor *kernelTensor, int stride, int padding);
 
 	void SetupCUDNN(bool firstLayer);
 	void Forward();

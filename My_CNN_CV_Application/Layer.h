@@ -4,10 +4,10 @@ class Layer {
 protected:
 	Layer* previousLayer, *nextLayer;
 	Tensor* inputTensor, *outputTensor;
-	
+	int stride, padding;
 public:
 	Layer();
-	Layer(Tensor *inputTensor, Tensor *outputTensor);
+	Layer(Tensor *inputTensor, Tensor *outputTensor, int stride, int padding);
 		
 	virtual void Forward() = 0;
 	virtual void SetInputData(float* inputData) = 0;

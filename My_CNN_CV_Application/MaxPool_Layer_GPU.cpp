@@ -4,9 +4,9 @@ MaxPool_Layer_GPU::MaxPool_Layer_GPU()
 {
 }
 
-MaxPool_Layer_GPU::MaxPool_Layer_GPU(Tensor * inputTensor, Tensor * outputTensor, int stride) : Layer_GPU(inputTensor, outputTensor)
+MaxPool_Layer_GPU::MaxPool_Layer_GPU(Tensor * inputTensor, Tensor * outputTensor, int stride, int padding) : Layer_GPU(inputTensor, outputTensor, stride, padding)
 {
-	this->stride = stride;
+	
 }
 
 void MaxPool_Layer_GPU::SetupCUDNN(bool firstLayer)
@@ -23,8 +23,8 @@ void MaxPool_Layer_GPU::SetupCUDNN_MaxPooling()
 	checkCUDNN(cudnnSetPooling2dDescriptor(cudnnPoolingDesc,
 		cudnnPoolingMode,
 		cudnnPoolingNanPropagation,
-		/*window height*/2,
-		/*window width*/ 2,
+		/*window height*/this->windowHeight,
+		/*window width*/ this->windowWidth,
 		/*vertical padding*/ this->padding,
 		/*horizontal padding*/ this->padding,
 		/*vertical stride*/ this->stride,

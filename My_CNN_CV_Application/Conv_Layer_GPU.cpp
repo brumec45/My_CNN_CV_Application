@@ -5,7 +5,7 @@ Conv_Layer_GPU::Conv_Layer_GPU()
 {
 }
 
-Conv_Layer_GPU::Conv_Layer_GPU(Tensor *inputTensor, Tensor *outputTensor, Tensor *kernelTensor) : Layer_GPU(inputTensor, outputTensor)
+Conv_Layer_GPU::Conv_Layer_GPU(Tensor *inputTensor, Tensor *outputTensor, Tensor *kernelTensor, int stride, int padding) : Layer_GPU(inputTensor, outputTensor, stride, padding)
 {
 	this->kernelTensor = kernelTensor;
 }
@@ -34,10 +34,10 @@ void Conv_Layer_GPU::SetupCUDNN_Convolution()
 	
 	checkCUDNN(cudnnCreateConvolutionDescriptor(&cudnnConvDesc));
 	checkCUDNN(cudnnSetConvolution2dDescriptor(cudnnConvDesc,
-		/*pad_height=*/1,
-		/*pad_width=*/1,
-		/*vertical_stride=*/1,
-		/*horizontal_stride=*/1,
+		/*pad_height=*/this->padding,
+		/*pad_width=*/this->padding,
+		/*vertical_stride=*/this->stride,
+		/*horizontal_stride=*/this->stride,
 		/*dilation_height=*/1,
 		/*dilation_width=*/1,
 		/*mode=*/CUDNN_CROSS_CORRELATION,

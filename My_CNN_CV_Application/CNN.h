@@ -7,10 +7,10 @@ class CNN {
 private:
 	std::vector<Layer*> layers;
 
-	void AddConvLayer(const TensorDimension &firstLayerInputTensorDimension, const TensorDimension &kernalTensorDimension, const TensorDimension &outputTensorDimension);
-	void AddConvLayer(const TensorDimension &kernalTensorDimension, const TensorDimension &outputTensorDimension);
-	void AddMaxPoolLayer(const TensorDimension &inputTensorDimension, const TensorDimension &outputTensorDimension, int stride);
-	void AddMaxPoolLayer(const TensorDimension &outputTensorDimension, int stride);
+	void AddConvLayer(TensorDimension firstLayerInputTensorDimension, TensorDimension kernalTensorDimension, TensorDimension outputTensorDimension, int stride, int padding);
+	void AddConvLayer(TensorDimension kernalTensorDimension, TensorDimension outputTensorDimension, int stride, int padding);
+	void AddMaxPoolLayer(TensorDimension inputTensorDimension, TensorDimension outputTensorDimension, int stride, int padding);
+	void AddMaxPoolLayer(TensorDimension outputTensorDimension, int stride, int padding);
 	void AddConv_MaxPool_Combo(int outputSize, int featureDepth);
 
 public:

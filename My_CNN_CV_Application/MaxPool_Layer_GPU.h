@@ -7,12 +7,12 @@ private:
 	const cudnnPoolingMode_t cudnnPoolingMode = CUDNN_POOLING_MAX;
 	const cudnnNanPropagation_t cudnnPoolingNanPropagation = CUDNN_NOT_PROPAGATE_NAN;
 
-	int stride, padding = 0, windowHeight = 2, windowWidth = 2;
+	int windowHeight = 2, windowWidth = 2;
 
 	void SetupCUDNN_MaxPooling();
 public:
 	MaxPool_Layer_GPU();
-	MaxPool_Layer_GPU(Tensor *inputTensor, Tensor *outputTensor, int stride);
+	MaxPool_Layer_GPU(Tensor *inputTensor, Tensor *outputTensor, int stride, int padding);
 
 	void SetupCUDNN(bool firstLayer);
 	void Forward();

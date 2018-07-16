@@ -10,10 +10,10 @@ private:
 	
 public:
 	Tensor();
-	Tensor(const TensorDimension &tensorDimension);
+	Tensor(TensorDimension tensorDimension);
 	void InitKernelWeights();
 	void SetTensorData(float * tensorData);
-	void SetTensorDimension(const TensorDimension &tensorDimension);
+	void SetTensorDimension(TensorDimension tensorDimension);
 	float* GetTensorData();
 	int GetBatchDimension();
 	int GetChannels();

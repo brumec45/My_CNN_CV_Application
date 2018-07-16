@@ -5,5 +5,5 @@ protected:
 	Tensor *kernelTensor;
 public:
 	Conv_Layer();
-	Conv_Layer(Tensor *inputTensor, Tensor *outputTensor, Tensor *kernelTensor);
+	Conv_Layer(Tensor *inputTensor, Tensor *outputTensor, Tensor *kernelTensor, int stride, int padding);
 };

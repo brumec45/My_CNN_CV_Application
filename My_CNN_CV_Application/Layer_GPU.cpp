@@ -5,7 +5,7 @@ Layer_GPU::Layer_GPU()
 {
 }
 
-Layer_GPU::Layer_GPU(Tensor * inputTensor, Tensor * outputTensor) : Layer(inputTensor, outputTensor)
+Layer_GPU::Layer_GPU(Tensor * inputTensor, Tensor * outputTensor, int stride, int padding) : Layer(inputTensor, outputTensor, stride, padding)
 {
 }
 

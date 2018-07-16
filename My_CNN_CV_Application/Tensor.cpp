@@ -4,7 +4,7 @@ Tensor::Tensor()
 {
 }
 
-Tensor::Tensor(const TensorDimension &tensorDimension)
+Tensor::Tensor(TensorDimension tensorDimension)
 {
 	this->tensorSize = tensorDimension.batchDimension * tensorDimension.channels * tensorDimension.height * tensorDimension.width;
 	this->tensorData = new float[this->tensorSize];
@@ -44,6 +44,15 @@ void Tensor::InitKernelWeights()
 			}
 		}
 	}
+
+	/*
+		float t;
+	for (size_t i = 0; i < this->tensorSize; i++)
+	{
+		t = this->tensorData[i];
+	}
+
+	*/
 }
 
 
@@ -53,7 +62,7 @@ void Tensor::SetTensorData(float* tensor)
 	this->tensorData = tensor;
 }
 
-void Tensor::SetTensorDimension(const TensorDimension &tensorDimension)
+void Tensor::SetTensorDimension(TensorDimension tensorDimension)
 {
 	this->tensorDimension = tensorDimension;
 }

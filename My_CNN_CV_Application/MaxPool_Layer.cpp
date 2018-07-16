@@ -4,7 +4,7 @@ MaxPool_Layer::MaxPool_Layer()
 {
 }
 
-MaxPool_Layer::MaxPool_Layer(Tensor * inputTensor, Tensor * outputTensor, int stride) : Layer(inputTensor, outputTensor)
+MaxPool_Layer::MaxPool_Layer(Tensor * inputTensor, Tensor * outputTensor, int stride, int padding) : Layer(inputTensor, outputTensor, stride, padding)
 {
 	this->stride = stride;
 }
