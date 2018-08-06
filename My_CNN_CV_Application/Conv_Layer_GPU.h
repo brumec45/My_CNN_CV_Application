@@ -4,6 +4,7 @@
 class Conv_Layer_GPU : public Layer_GPU {
 private:
 	Tensor *kernelTensor;
+	int activationType; //0 - Leaky RELU, 1 - RELU
 
 	cudnnFilterDescriptor_t	     cudnnKernelDesc;
 	cudnnConvolutionDescriptor_t cudnnConvDesc;
@@ -16,7 +17,7 @@ private:
 	void AllocateCUDAMemory_Convolution();
 public:
 	Conv_Layer_GPU();
-	Conv_Layer_GPU(Tensor *inputTensor, Tensor *outputTensor, Tensor *kernelTensor, int stride, int padding);
+	Conv_Layer_GPU(Tensor *inputTensor, Tensor *outputTensor, Tensor *kernelTensor, int stride, int padding, int activationType);
 
 	void SetupCUDNN(bool firstLayer);
 	void Forward();

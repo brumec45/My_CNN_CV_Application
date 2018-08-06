@@ -181,10 +181,10 @@
     <ClInclude Include="TensorDimension.h" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="Leaky_RELU_Activation_Kernel.cu">
+    <CudaCompile Include="RELU_Activation_Kernel.cu">
       <FileType>Document</FileType>
     </CudaCompile>
-    <CudaCompile Include="Leaky_RELU_Activation_Kernel.cuh">
+    <CudaCompile Include="RELU_Activation_Kernel.cuh">
       <FileType>Document</FileType>
     </CudaCompile>
   </ItemGroup>

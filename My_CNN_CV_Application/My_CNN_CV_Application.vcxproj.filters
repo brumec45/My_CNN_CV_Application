@@ -88,10 +88,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="Leaky_RELU_Activation_Kernel.cuh">
+    <CudaCompile Include="RELU_Activation_Kernel.cuh">
       <Filter>Header Files</Filter>
     </CudaCompile>
-    <CudaCompile Include="Leaky_RELU_Activation_Kernel.cu">
+    <CudaCompile Include="RELU_Activation_Kernel.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
   </ItemGroup>

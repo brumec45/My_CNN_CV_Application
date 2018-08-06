@@ -11,64 +11,9 @@ void CNN::InitCNN()
 	Mat myBlob = cv::dnn::blobFromImage(testImage, 1, cv::Size(416, 416), cv::Scalar(0, 0, 0), true, false);
 	
 	float * myBlobF = myBlob.ptr<float>();
-	int inputSize = 416;
-	int featureDepth = 16;
-	int outputSize = 416;
-
-	TensorDimension inputTensor1(1, 3, inputSize, inputSize);
-	TensorDimension kernelTensor1(featureDepth, 3, 3, 3);
-	TensorDimension outputTensor1(1, featureDepth, outputSize, outputSize);
-	AddConvLayer(inputTensor1, kernelTensor1, outputTensor1, 1, 1);
 	
-	TensorDimension outputTensor2(1, featureDepth, outputSize / 2, outputSize / 2);
-	AddMaxPoolLayer(outputTensor2, 2, 0);
 		
-	for (size_t i = 0; i < 4; i++)
-	{
-		outputSize /= 2;
-		featureDepth *= 2;
-		AddConv_MaxPool_Combo(outputSize, featureDepth);
-	}
-	outputSize /= 2; //13x13
-	featureDepth *= 2;//512
-
-	TensorDimension kernelTensor3(featureDepth, featureDepth / 2, 3, 3);
-	TensorDimension outputTensor3(1, featureDepth, outputSize, outputSize);
-	AddConvLayer(kernelTensor3, outputTensor3, 1, 1);
-
-	TensorDimension outputTensor4(1, featureDepth, outputSize, outputSize);
-	AddMaxPoolLayer(outputTensor4, 1, 0);
-
-	featureDepth *= 2;//1024
-
-	TensorDimension kernelTensor4(featureDepth, featureDepth / 2, 3, 3);
-	TensorDimension outputTensor5(1, featureDepth, outputSize, outputSize);
-	AddConvLayer(kernelTensor4, outputTensor5, 1, 1);
-
-	TensorDimension kernelTensor5(featureDepth, featureDepth, 3, 3);
-	TensorDimension outputTensor6(1, featureDepth, outputSize, outputSize);
-	AddConvLayer(kernelTensor5, outputTensor6, 1, 1);
-
-	TensorDimension kernelTensor6(125, featureDepth, 1, 1);
-	TensorDimension outputTensor7(1, 125, outputSize, outputSize);
-	AddConvLayer(kernelTensor6, outputTensor7, 1, 0);
-
-	this->layers[0]->SetInputData(myBlobF);
-
-	for (size_t i = 0; i < this->layers.size(); i++)
-	{
-		this->layers[i]->Forward();
-	}
-	
-
-	float* outputData = this->layers[this->layers.size() - 1]->GetLayerOutputData();
-	/*std::vector<float>testV;
-	for (size_t i = 0; i < this->layers[0]->GetOutputTensor()->GetTensorSize(); i++)
-	{
-		testV.push_back(outputData[i]);
-	}*/
-
-	Mat result(outputSize, outputSize, CV_32FC1);
+	/*Mat result(outputSize, outputSize, CV_32FC1);
 	//float* resultP = result.
 	float t;
 	for (int i = 0; i < outputSize; i++)
@@ -80,23 +25,90 @@ void CNN::InitCNN()
 			t = outputData[i * outputSize + j];
 			result.at<float>(i, j) = outputData[i * outputSize + j];
 		}
-	}
+	}*/
 	//float a = h_output[10];
-	imshow("src", result);
-	cv::waitKey(0);
+	//imshow("src", result);
+	//cv::waitKey(0);
 }
 
-void CNN::AddConv_MaxPool_Combo(int outputSize, int featureDepth) 
+void CNN::GenerateTinyYOLOv2Architecture(int inputSize)
+{
+	int featureDepth = 16;
+	int outputSize = inputSize;
+	TensorDimension inputTensor1(1, 3, inputSize, inputSize);
+	TensorDimension kernelTensor1(featureDepth, 3, 3, 3);
+	TensorDimension outputTensor1(1, featureDepth, outputSize, outputSize);
+	AddConvLayer(inputTensor1, kernelTensor1, outputTensor1, 1, 1, 0);
+
+	TensorDimension outputTensor2(1, featureDepth, outputSize / 2, outputSize / 2);
+	AddMaxPoolLayer(outputTensor2, 2, 0);
+
+	for (size_t i = 0; i < 4; i++)
+	{
+		outputSize /= 2;
+		featureDepth *= 2;
+		AddConv_MaxPool_Combo(outputSize, featureDepth, 0);
+	}
+	outputSize /= 2; //13x13
+	featureDepth *= 2;//512
+
+	TensorDimension kernelTensor3(featureDepth, featureDepth / 2, 3, 3);
+	TensorDimension outputTensor3(1, featureDepth, outputSize, outputSize);
+	AddConvLayer(kernelTensor3, outputTensor3, 1, 1, 0);
+
+	TensorDimension outputTensor4(1, featureDepth, outputSize, outputSize);
+	AddMaxPoolLayer(outputTensor4, 1, 0);
+
+	featureDepth *= 2;//1024
+
+	TensorDimension kernelTensor4(featureDepth, featureDepth / 2, 3, 3);
+	TensorDimension outputTensor5(1, featureDepth, outputSize, outputSize);
+	AddConvLayer(kernelTensor4, outputTensor5, 1, 1, 0);
+
+	TensorDimension kernelTensor5(featureDepth, featureDepth, 3, 3);
+	TensorDimension outputTensor6(1, featureDepth, outputSize, outputSize);
+	AddConvLayer(kernelTensor5, outputTensor6, 1, 1, 0);
+
+	TensorDimension kernelTensor6(125, featureDepth, 1, 1);
+	TensorDimension outputTensor7(1, 125, outputSize, outputSize);
+	AddConvLayer(kernelTensor6, outputTensor7, 1, 0, 1);
+}
+
+void CNN::SetInput(float * input)
+{
+	if (this->layers.size() == 0)
+	{
+		return;
+	}
+
+	this->layers[0]->SetInputData(input);
+}
+
+void CNN::ForwardPass()
+{
+	for (size_t i = 0; i < this->layers.size(); i++)
+	{
+		this->layers[i]->Forward();
+	}
+}
+
+float * CNN::GetOutput()
+{
+	float* outputData = this->layers[this->layers.size() - 1]->GetLayerOutputData();
+	return outputData;
+}
+
+void CNN::AddConv_MaxPool_Combo(int outputSize, int featureDepth, int activationType)
 {
 	TensorDimension kernelTensor1(featureDepth, featureDepth / 2, 3, 3);
 	TensorDimension outputTensor1(1, featureDepth, outputSize, outputSize);
-	AddConvLayer(kernelTensor1, outputTensor1, 1, 1);
+	AddConvLayer(kernelTensor1, outputTensor1, 1, 1, activationType);
 
 	TensorDimension outputTensor2(1, featureDepth, outputSize / 2, outputSize / 2);
 	AddMaxPoolLayer(outputTensor2, 2, 0);
 }
 
-void CNN::AddConvLayer(TensorDimension firstLayerInputTensorDimension, TensorDimension kernalTensorDimension, TensorDimension outputTensorDimension, int stride, int padding)
+void CNN::AddConvLayer(TensorDimension firstLayerInputTensorDimension, TensorDimension kernalTensorDimension, TensorDimension outputTensorDimension, int stride, int padding, int activationType)
 {
 	Tensor* inputTensor = new Tensor(firstLayerInputTensorDimension);
 	
@@ -107,7 +119,7 @@ void CNN::AddConvLayer(TensorDimension firstLayerInputTensorDimension, TensorDim
 		
 	Tensor* outputTensor = new Tensor(outputTensorDimension);
 
-	Conv_Layer_GPU* convLayerGPU = new Conv_Layer_GPU(inputTensor, outputTensor, kernelTensor, stride, padding);
+	Conv_Layer_GPU* convLayerGPU = new Conv_Layer_GPU(inputTensor, outputTensor, kernelTensor, stride, padding, activationType);
 
 	convLayerGPU->SetPreviousLayer(nullptr);
 	convLayerGPU->SetupCUDNN(true);
@@ -115,7 +127,7 @@ void CNN::AddConvLayer(TensorDimension firstLayerInputTensorDimension, TensorDim
 	this->layers.push_back(convLayerGPU);
 }
 
-void CNN::AddConvLayer(TensorDimension kernalTensorDimension, TensorDimension outputTensorDimension, int stride, int padding)
+void CNN::AddConvLayer(TensorDimension kernalTensorDimension, TensorDimension outputTensorDimension, int stride, int padding, int activationType)
 {
 	if (this->layers.size() == 0)
 	{
@@ -130,7 +142,7 @@ void CNN::AddConvLayer(TensorDimension kernalTensorDimension, TensorDimension ou
 
 	Tensor* outputTensor = new Tensor(outputTensorDimension);
 
-	Conv_Layer_GPU* convLayerGPU = new Conv_Layer_GPU(inputTensor, outputTensor, kernelTensor, stride, padding);
+	Conv_Layer_GPU* convLayerGPU = new Conv_Layer_GPU(inputTensor, outputTensor, kernelTensor, stride, padding, activationType);
 
 	convLayerGPU->SetPreviousLayer(this->layers[this->layers.size() - 1]);
 	convLayerGPU->SetupCUDNN(false);

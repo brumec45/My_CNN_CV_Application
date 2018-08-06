@@ -5,9 +5,10 @@ Conv_Layer_GPU::Conv_Layer_GPU()
 {
 }
 
-Conv_Layer_GPU::Conv_Layer_GPU(Tensor *inputTensor, Tensor *outputTensor, Tensor *kernelTensor, int stride, int padding) : Layer_GPU(inputTensor, outputTensor, stride, padding)
+Conv_Layer_GPU::Conv_Layer_GPU(Tensor *inputTensor, Tensor *outputTensor, Tensor *kernelTensor, int stride, int padding, int activationType) : Layer_GPU(inputTensor, outputTensor, stride, padding)
 {
 	this->kernelTensor = kernelTensor;
+	this->activationType = activationType;
 }
 
 
@@ -79,8 +80,16 @@ void Conv_Layer_GPU::Forward()
 		cudnnOutputDesc,
 		this->outputGPUMemoryPointer));
 	
-	LeakyRELUActivation(this->outputGPUMemoryPointer, this->outputTensor->GetTensorSize());
-	checkCUDA(cudaPeekAtLastError());
+	if (this->activationType == 0)
+	{
+		LeakyRELUActivation(this->outputGPUMemoryPointer, this->outputTensor->GetTensorSize());
+		checkCUDA(cudaPeekAtLastError());
+	}
+	else
+	{
+		RELUActivation(this->outputGPUMemoryPointer, this->outputTensor->GetTensorSize());
+		checkCUDA(cudaPeekAtLastError());
+	}
 }
 
 
