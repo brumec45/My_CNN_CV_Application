@@ -22,10 +22,9 @@ protected:
 		
 public:
 	Layer_GPU();
+	Layer_GPU(Tensor* inputTensor, Tensor* outputTensor);
 	Layer_GPU(Tensor* inputTensor, Tensor* outputTensor, int stride, int padding);
-
-	virtual void SetupCUDNN(bool firstLayer) = 0;
-
+			
 	void SetInputData(float* inputData);
 
 	//Za naslednjo plast input

@@ -5,6 +5,10 @@ Layer_GPU::Layer_GPU()
 {
 }
 
+Layer_GPU::Layer_GPU(Tensor * inputTensor, Tensor * outputTensor) : Layer(inputTensor, outputTensor, stride, padding)
+{
+}
+
 Layer_GPU::Layer_GPU(Tensor * inputTensor, Tensor * outputTensor, int stride, int padding) : Layer(inputTensor, outputTensor, stride, padding)
 {
 }
@@ -57,11 +61,13 @@ void Layer_GPU::AllocateCUDAMemory_InputOutput(bool firstLayer)
 
 	cudaMalloc(&this->outputGPUMemoryPointer, this->layerOutputBytes);
 	cudaMemset(this->outputGPUMemoryPointer, 0, this->layerOutputBytes);
+	checkCUDA(cudaPeekAtLastError());
 }
 
 void Layer_GPU::SetInputData(float * inputData)
 {
 	cudaMemcpy(this->inputGPUMemoryPointer, inputData, this->layerInputBytes, cudaMemcpyHostToDevice);
+	checkCUDA(cudaPeekAtLastError());
 }
 
 float * Layer_GPU::GetOutputGPUMemoryPointer()
@@ -72,6 +78,7 @@ float * Layer_GPU::GetOutputGPUMemoryPointer()
 float * Layer_GPU::GetLayerOutputData()
 {
 	cudaMemcpy(this->outputTensor->GetTensorData(), this->outputGPUMemoryPointer, this->layerOutputBytes, cudaMemcpyDeviceToHost);
+	checkCUDA(cudaPeekAtLastError());
 	return this->outputTensor->GetTensorData();
 }
 

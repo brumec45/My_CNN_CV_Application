@@ -9,6 +9,7 @@ MaxPool_Layer_GPU::MaxPool_Layer_GPU(Tensor * inputTensor, Tensor * outputTensor
 	
 }
 
+
 void MaxPool_Layer_GPU::SetupCUDNN(bool firstLayer)
 {
 	checkCUDNN(cudnnCreate(&cudnnHandle));

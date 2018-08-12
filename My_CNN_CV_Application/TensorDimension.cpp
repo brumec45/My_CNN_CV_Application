@@ -10,4 +10,5 @@ TensorDimension::TensorDimension(int batchDimension, int channels, int height, i
 	this->channels = channels;
 	this->height = height;
 	this->width = width;
+	this->size = batchDimension * channels * height * width;
 }

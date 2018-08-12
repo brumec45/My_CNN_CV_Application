@@ -154,6 +154,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BatchNormalization_Layer_GPU.cpp" />
     <ClCompile Include="CNN.cpp" />
     <ClCompile Include="Conv_Layer.cpp" />
     <ClCompile Include="Conv_Layer_GPU.cpp" />
@@ -166,8 +167,10 @@
     <ClCompile Include="MaxPool_Layer_GPU.cpp" />
     <ClCompile Include="Tensor.cpp" />
     <ClCompile Include="TensorDimension.cpp" />
+    <ClCompile Include="WeightsReader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BatchNormalization_Layer_GPU.h" />
     <ClInclude Include="CNN.h" />
     <ClInclude Include="Conv_Layer.h" />
     <ClInclude Include="Conv_Layer_GPU.h" />
@@ -179,6 +182,7 @@
     <ClInclude Include="MaxPool_Layer_GPU.h" />
     <ClInclude Include="Tensor.h" />
     <ClInclude Include="TensorDimension.h" />
+    <ClInclude Include="WeightsReader.h" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="RELU_Activation_Kernel.cu">

@@ -31,14 +31,16 @@ void CNN::InitCNN()
 	//cv::waitKey(0);
 }
 
-void CNN::GenerateTinyYOLOv2Architecture(int inputSize)
+void CNN::GenerateTinyYOLOv2Architecture(int inputSize, char* weightsFileName, bool batchNormalization)
 {
+	this->weightsReader.OpenFile(weightsFileName);
 	int featureDepth = 16;
 	int outputSize = inputSize;
+
 	TensorDimension inputTensor1(1, 3, inputSize, inputSize);
 	TensorDimension kernelTensor1(featureDepth, 3, 3, 3);
 	TensorDimension outputTensor1(1, featureDepth, outputSize, outputSize);
-	AddConvLayer(inputTensor1, kernelTensor1, outputTensor1, 1, 1, 0);
+	AddConvLayer(inputTensor1, kernelTensor1, outputTensor1, 1, 1, 0, batchNormalization);
 
 	TensorDimension outputTensor2(1, featureDepth, outputSize / 2, outputSize / 2);
 	AddMaxPoolLayer(outputTensor2, 2, 0);
@@ -47,14 +49,14 @@ void CNN::GenerateTinyYOLOv2Architecture(int inputSize)
 	{
 		outputSize /= 2;
 		featureDepth *= 2;
-		AddConv_MaxPool_Combo(outputSize, featureDepth, 0);
+		AddConv_MaxPool_Combo(outputSize, featureDepth, 0, batchNormalization);
 	}
 	outputSize /= 2; //13x13
 	featureDepth *= 2;//512
 
 	TensorDimension kernelTensor3(featureDepth, featureDepth / 2, 3, 3);
 	TensorDimension outputTensor3(1, featureDepth, outputSize, outputSize);
-	AddConvLayer(kernelTensor3, outputTensor3, 1, 1, 0);
+	AddConvLayer(kernelTensor3, outputTensor3, 1, 1, 0, batchNormalization);
 
 	TensorDimension outputTensor4(1, featureDepth, outputSize, outputSize);
 	AddMaxPoolLayer(outputTensor4, 1, 0);
@@ -63,15 +65,29 @@ void CNN::GenerateTinyYOLOv2Architecture(int inputSize)
 
 	TensorDimension kernelTensor4(featureDepth, featureDepth / 2, 3, 3);
 	TensorDimension outputTensor5(1, featureDepth, outputSize, outputSize);
-	AddConvLayer(kernelTensor4, outputTensor5, 1, 1, 0);
+	AddConvLayer(kernelTensor4, outputTensor5, 1, 1, 0, batchNormalization);
 
 	TensorDimension kernelTensor5(featureDepth, featureDepth, 3, 3);
 	TensorDimension outputTensor6(1, featureDepth, outputSize, outputSize);
-	AddConvLayer(kernelTensor5, outputTensor6, 1, 1, 0);
+	AddConvLayer(kernelTensor5, outputTensor6, 1, 1, 0, batchNormalization);
 
 	TensorDimension kernelTensor6(125, featureDepth, 1, 1);
 	TensorDimension outputTensor7(1, 125, outputSize, outputSize);
-	AddConvLayer(kernelTensor6, outputTensor7, 1, 0, 1);
+	AddConvLayer(kernelTensor6, outputTensor7, 1, 0, 1, false);
+	this->weightsReader.CloseFile();
+}
+
+void CNN::GenerateSimpleConvolutionTestArchitecture(int inputSize, char* weightsFileName, bool batchNormalization)
+{
+	this->weightsReader.OpenFile(weightsFileName);
+	int featureDepth = 16;
+	int outputSize = inputSize;
+
+	TensorDimension inputTensor1(1, 3, inputSize, inputSize);
+	TensorDimension kernelTensor1(featureDepth, 3, 3, 3);
+	TensorDimension outputTensor1(1, featureDepth, outputSize, outputSize);
+	AddConvLayer(inputTensor1, kernelTensor1, outputTensor1, 1, 1, 0, batchNormalization);
+	this->weightsReader.CloseFile();
 }
 
 void CNN::SetInput(float * input)
@@ -98,36 +114,46 @@ float * CNN::GetOutput()
 	return outputData;
 }
 
-void CNN::AddConv_MaxPool_Combo(int outputSize, int featureDepth, int activationType)
+void CNN::AddConv_MaxPool_Combo(int outputSize, int featureDepth, int activationType, bool batchNormalization)
 {
 	TensorDimension kernelTensor1(featureDepth, featureDepth / 2, 3, 3);
 	TensorDimension outputTensor1(1, featureDepth, outputSize, outputSize);
-	AddConvLayer(kernelTensor1, outputTensor1, 1, 1, activationType);
-
+	AddConvLayer(kernelTensor1, outputTensor1, 1, 1, activationType, batchNormalization);
+	
 	TensorDimension outputTensor2(1, featureDepth, outputSize / 2, outputSize / 2);
 	AddMaxPoolLayer(outputTensor2, 2, 0);
 }
 
-void CNN::AddConvLayer(TensorDimension firstLayerInputTensorDimension, TensorDimension kernalTensorDimension, TensorDimension outputTensorDimension, int stride, int padding, int activationType)
+void CNN::AddConvLayer(TensorDimension firstLayerInputTensorDimension, TensorDimension kernalTensorDimension, TensorDimension outputTensorDimension, int stride, int padding, int activationType, bool batchNormalization)
 {
 	Tensor* inputTensor = new Tensor(firstLayerInputTensorDimension);
-	
-	//inputTensor.SetTensorData(myBlobF);
-		
 	Tensor* kernelTensor = new Tensor(kernalTensorDimension);
-	kernelTensor->InitKernelWeights();
-		
 	Tensor* outputTensor = new Tensor(outputTensorDimension);
+	Conv_Layer_GPU* convLayerGPU = new Conv_Layer_GPU(inputTensor, outputTensor, kernelTensor, stride, padding, activationType, batchNormalization);
 
-	Conv_Layer_GPU* convLayerGPU = new Conv_Layer_GPU(inputTensor, outputTensor, kernelTensor, stride, padding, activationType);
+	if (batchNormalization)
+	{
+		int outputFeatureDepth = outputTensor->GetChannels();
+		float * bnBias = new float[outputFeatureDepth];
+		float * bnScales = new float[outputFeatureDepth];
+		float * estimatedMean = new float[outputFeatureDepth];
+		float * estimatedVariance = new float[outputFeatureDepth];
 
+		this->weightsReader.GetBatchNormalizationParameters(outputFeatureDepth, bnBias, bnScales, estimatedMean, estimatedVariance);
+		convLayerGPU->SetBatchNormalizationParameters(bnBias, bnScales, estimatedMean, estimatedVariance);
+	}
+
+	this->weightsReader.GetWeights(kernelTensor->GetTensorSize(), convLayerGPU->GetKernelTensorWeights());
+	//kernelTensor->InitKernelWeights();
+	//kernelTensor->SetKernelWeights(weights);
+	
 	convLayerGPU->SetPreviousLayer(nullptr);
 	convLayerGPU->SetupCUDNN(true);
 
 	this->layers.push_back(convLayerGPU);
 }
 
-void CNN::AddConvLayer(TensorDimension kernalTensorDimension, TensorDimension outputTensorDimension, int stride, int padding, int activationType)
+void CNN::AddConvLayer(TensorDimension kernalTensorDimension, TensorDimension outputTensorDimension, int stride, int padding, int activationType, bool batchNormalization)
 {
 	if (this->layers.size() == 0)
 	{
@@ -135,15 +161,26 @@ void CNN::AddConvLayer(TensorDimension kernalTensorDimension, TensorDimension ou
 	}
 
 	Tensor* inputTensor = this->layers[this->layers.size() - 1]->GetOutputTensor();
-	//inputTensor.SetTensorData(myBlobF);
-
 	Tensor* kernelTensor = new Tensor(kernalTensorDimension);
-	kernelTensor->InitKernelWeights();
-
 	Tensor* outputTensor = new Tensor(outputTensorDimension);
+	Conv_Layer_GPU* convLayerGPU = new Conv_Layer_GPU(inputTensor, outputTensor, kernelTensor, stride, padding, activationType, batchNormalization);
 
-	Conv_Layer_GPU* convLayerGPU = new Conv_Layer_GPU(inputTensor, outputTensor, kernelTensor, stride, padding, activationType);
+	if (batchNormalization)
+	{
+		int outputFeatureDepth = outputTensor->GetChannels();
+		float * bnBias = new float[outputFeatureDepth];
+		float * bnScales = new float[outputFeatureDepth];
+		float * estimatedMean = new float[outputFeatureDepth];
+		float * estimatedVariance = new float[outputFeatureDepth];
 
+		this->weightsReader.GetBatchNormalizationParameters(outputFeatureDepth, bnBias, bnScales, estimatedMean, estimatedVariance);
+		convLayerGPU->SetBatchNormalizationParameters(bnBias, bnScales, estimatedMean, estimatedVariance);
+	}
+
+	this->weightsReader.GetWeights(kernelTensor->GetTensorSize(), convLayerGPU->GetKernelTensorWeights());
+	//kernelTensor->InitKernelWeights();
+	//kernelTensor->SetKernelWeights(weights);
+	
 	convLayerGPU->SetPreviousLayer(this->layers[this->layers.size() - 1]);
 	convLayerGPU->SetupCUDNN(false);
 

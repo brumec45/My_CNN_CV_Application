@@ -5,10 +5,16 @@ Conv_Layer_GPU::Conv_Layer_GPU()
 {
 }
 
-Conv_Layer_GPU::Conv_Layer_GPU(Tensor *inputTensor, Tensor *outputTensor, Tensor *kernelTensor, int stride, int padding, int activationType) : Layer_GPU(inputTensor, outputTensor, stride, padding)
+Conv_Layer_GPU::Conv_Layer_GPU(Tensor *inputTensor, Tensor *outputTensor, Tensor *kernelTensor, int stride, int padding, int activationType, bool batchNormalization) : Layer_GPU(inputTensor, outputTensor, stride, padding)
 {
 	this->kernelTensor = kernelTensor;
 	this->activationType = activationType;
+	this->batchNormalization = batchNormalization;
+
+	if (this->batchNormalization)
+	{
+		this->batchNormalizationLayer.SetInputOutputDimension(outputTensor->GetTensorDimension());
+	}
 }
 
 
@@ -19,11 +25,34 @@ void Conv_Layer_GPU::SetupCUDNN(bool firstLayer)
 	SetupCUDNN_Convolution();
 	AllocateCUDAMemory_InputOutput(firstLayer);
 	AllocateCUDAMemory_Convolution();
-	
+
+	if (this->batchNormalization)
+	{
+		this->batchNormalizationLayer.SetupCUDNN();
+	}
+}
+
+void Conv_Layer_GPU::SetBatchNormalizationParameters(float * bnBias, float * bnScales, float * estimatedMean, float * estimatedVariance)
+{
+	if (this->batchNormalization)
+	{
+		this->batchNormalizationLayer.SetBatchNormalizationParameters(bnBias, bnScales, estimatedMean, estimatedVariance);
+	}
+}
+
+Tensor * Conv_Layer_GPU::GetKernelTensor()
+{
+	return this->kernelTensor;
+}
+
+float * Conv_Layer_GPU::GetKernelTensorWeights()
+{
+	return this->kernelTensor->GetTensorData();
 }
 
 void Conv_Layer_GPU::SetupCUDNN_Convolution()
 {
+	
 	checkCUDNN(cudnnCreateFilterDescriptor(&cudnnKernelDesc));
 	checkCUDNN(cudnnSetFilter4dDescriptor(cudnnKernelDesc,
 		/*dataType=*/CUDNN_DATA_FLOAT,
@@ -80,6 +109,12 @@ void Conv_Layer_GPU::Forward()
 		cudnnOutputDesc,
 		this->outputGPUMemoryPointer));
 	
+
+	if (this->batchNormalization)
+	{
+		this->batchNormalizationLayer.Normalize(this->outputGPUMemoryPointer);
+	}
+		
 	if (this->activationType == 0)
 	{
 		LeakyRELUActivation(this->outputGPUMemoryPointer, this->outputTensor->GetTensorSize());

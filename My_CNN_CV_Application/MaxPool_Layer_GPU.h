@@ -13,7 +13,7 @@ private:
 public:
 	MaxPool_Layer_GPU();
 	MaxPool_Layer_GPU(Tensor *inputTensor, Tensor *outputTensor, int stride, int padding);
-
+		
 	void SetupCUDNN(bool firstLayer);
 	void Forward();
 

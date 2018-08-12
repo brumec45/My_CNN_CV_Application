@@ -12,6 +12,7 @@ public:
 	Tensor();
 	Tensor(TensorDimension tensorDimension);
 	void InitKernelWeights();
+	void SetKernelWeights(float* weights);
 	void SetTensorData(float * tensorData);
 	void SetTensorDimension(TensorDimension tensorDimension);
 	float* GetTensorData();
@@ -20,4 +21,5 @@ public:
 	int GetHeight();
 	int GetWidth();
 	int GetTensorSize();
+	TensorDimension GetTensorDimension();
 };
