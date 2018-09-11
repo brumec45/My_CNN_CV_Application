@@ -10,7 +10,7 @@ Conv_Layer_GPU::Conv_Layer_GPU(Tensor *inputTensor, Tensor *outputTensor, Tensor
 	this->kernelTensor = kernelTensor;
 	this->activationType = activationType;
 	this->batchNormalization = batchNormalization;
-
+	
 	if (this->batchNormalization)
 	{
 		this->batchNormalizationLayer.SetInputOutputDimension(outputTensor->GetTensorDimension());
@@ -30,13 +30,36 @@ void Conv_Layer_GPU::SetupCUDNN(bool firstLayer)
 	{
 		this->batchNormalizationLayer.SetupCUDNN();
 	}
+	else
+	{
+		//BIAS
+		AllocateCUDAMemory_AddBias();
+	}
+
 }
 
-void Conv_Layer_GPU::SetBatchNormalizationParameters(float * bnBias, float * bnScales, float * estimatedMean, float * estimatedVariance)
+void Conv_Layer_GPU::SetBatchNormalizationParameters(float * bnScales, float * estimatedMean, float * estimatedVariance)
 {
 	if (this->batchNormalization)
 	{
-		this->batchNormalizationLayer.SetBatchNormalizationParameters(bnBias, bnScales, estimatedMean, estimatedVariance);
+		this->batchNormalizationLayer.SetBatchNormalizationParameters(bnScales, estimatedMean, estimatedVariance);
+	}
+}
+
+void Conv_Layer_GPU::SetBias(float * bias)
+{
+	if (this->batchNormalization)
+	{
+		this->batchNormalizationLayer.SetBnBias(bias);
+	}
+	else
+	{
+		this->bias = bias;
+		float t;
+		for (size_t i = 0; i < 125; i++)
+		{
+			t = bias[i];
+		}
 	}
 }
 
@@ -93,6 +116,20 @@ void Conv_Layer_GPU::AllocateCUDAMemory_Convolution()
 	cudaMemcpy(this->kernelGPUMemoryPointer, this->kernelTensor->GetTensorData(), this->layerKernelBytes, cudaMemcpyHostToDevice);
 }
 
+void Conv_Layer_GPU::AllocateCUDAMemory_AddBias()
+{
+	int biasGPUBytes = this->outputTensor->GetChannels() * sizeof(float);
+	cudaMalloc(&this->biasGPUMemoryPointer, biasGPUBytes);
+	cudaMemcpy(this->biasGPUMemoryPointer, this->bias, biasGPUBytes, cudaMemcpyHostToDevice);
+	checkCUDA(cudaPeekAtLastError());
+}
+
+void Conv_Layer_GPU::AddBias()
+{
+	AddBIAS_GPU(this->outputGPUMemoryPointer, this->biasGPUMemoryPointer, this->outputTensor->GetChannels(), this->outputTensor->GetHeight(), this->outputTensor->GetWidth());
+	checkCUDA(cudaPeekAtLastError());
+}
+
 void Conv_Layer_GPU::Forward()
 {
 	checkCUDNN(cudnnConvolutionForward(cudnnHandle,
@@ -114,15 +151,19 @@ void Conv_Layer_GPU::Forward()
 	{
 		this->batchNormalizationLayer.Normalize(this->outputGPUMemoryPointer);
 	}
+	else
+	{
+		AddBias();
+	}
 		
 	if (this->activationType == 0)
 	{
-		LeakyRELUActivation(this->outputGPUMemoryPointer, this->outputTensor->GetTensorSize());
+		LeakyRELUActivation_GPU(this->outputGPUMemoryPointer, this->outputTensor->GetTensorSize());
 		checkCUDA(cudaPeekAtLastError());
 	}
 	else
 	{
-		RELUActivation(this->outputGPUMemoryPointer, this->outputTensor->GetTensorSize());
+		RELUActivation_GPU(this->outputGPUMemoryPointer, this->outputTensor->GetTensorSize());
 		checkCUDA(cudaPeekAtLastError());
 	}
 }

@@ -56,12 +56,16 @@ void BatchNormalization_Layer_GPU::SetInputOutputDimension(TensorDimension tenso
 	this->outputTensor = new Tensor(tensorDimension);
 }
 
-void BatchNormalization_Layer_GPU::SetBatchNormalizationParameters(float * bnBias, float * bnScales, float * estimatedMean, float * estimatedVariance)
+void BatchNormalization_Layer_GPU::SetBatchNormalizationParameters(float * bnScales, float * estimatedMean, float * estimatedVariance)
 {
-	this->bnBias = bnBias;
 	this->bnScales = bnScales;
 	this->estimatedMean = estimatedMean;
 	this->estimatedVariance = estimatedVariance;
+}
+
+void BatchNormalization_Layer_GPU::SetBnBias(float * bnBias)
+{
+	this->bnBias = bnBias;
 }
 
 void BatchNormalization_Layer_GPU::SetupCUDNN()

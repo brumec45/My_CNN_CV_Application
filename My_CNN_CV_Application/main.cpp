@@ -46,8 +46,12 @@ int main(int, char** argv)
 	int outputSize = 13;
 	Mat result(outputSize, outputSize, CV_32FC1);
 	std::vector<float> testVector;
-
-	float t;
+	
+	for (size_t i = 0; i < 125 * 13 * 13; i++)
+	{
+		testVector.push_back(outputData[i]);
+	}
+	/*float t;
 	for (int i = 0; i < outputSize; i++)
 	{
 		//resultP = result.data + i * result.step;
@@ -58,7 +62,7 @@ int main(int, char** argv)
 			testVector.push_back(t);
 			result.at<float>(i, j) = outputData[i * outputSize + j];
 		}
-	}
+	}*/
 	
 	imshow("src", result);
 	cv::waitKey(0);

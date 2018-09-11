@@ -5,11 +5,14 @@
 class Conv_Layer_GPU : public Layer_GPU {
 private:
 	Tensor *kernelTensor;
+	float* bias = nullptr;
+	float* biasGPUMemoryPointer = nullptr;
 	BatchNormalization_Layer_GPU batchNormalizationLayer;
 
 	int activationType; //0 - Leaky RELU, 1 - RELU
 	bool batchNormalization = true;
-	cudnnFilterDescriptor_t	     cudnnKernelDesc;
+		
+	cudnnFilterDescriptor_t cudnnKernelDesc;
 	cudnnConvolutionDescriptor_t cudnnConvDesc;
 
 	int layerKernelBytes = 0;
@@ -18,12 +21,16 @@ private:
 
 	void SetupCUDNN_Convolution();
 	void AllocateCUDAMemory_Convolution();
+	void AllocateCUDAMemory_AddBias();
+
+	void AddBias();
 public:
 	Conv_Layer_GPU();
 	Conv_Layer_GPU(Tensor *inputTensor, Tensor *outputTensor, Tensor *kernelTensor, int stride, int padding, int activationType, bool batchNormalization);
 
 	void SetupCUDNN(bool firstLayer);
-	void SetBatchNormalizationParameters(float * bnBias, float * bnScales, float * estimatedMean, float * estimatedVariance);
+	void SetBatchNormalizationParameters(float * bnScales, float * estimatedMean, float * estimatedVariance);
+	void SetBias(float* bias);
 	Tensor* GetKernelTensor();
 	float* GetKernelTensorWeights();
 	void Forward();

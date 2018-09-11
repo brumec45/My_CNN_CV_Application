@@ -22,7 +22,8 @@ public:
 	BatchNormalization_Layer_GPU(TensorDimension tensorDimension);
 
 	void SetInputOutputDimension(TensorDimension tensorDimension);
-	void SetBatchNormalizationParameters(float *bnBias, float *bnScales, float *estimatedMean, float *estimatedVariance);
+	void SetBatchNormalizationParameters(float *bnScales, float *estimatedMean, float *estimatedVariance);
+	void SetBnBias(float* bnBias);
 	void SetupCUDNN();
 	void Normalize(float *gpuMemoryLocationToNormalize);
 	void Forward();

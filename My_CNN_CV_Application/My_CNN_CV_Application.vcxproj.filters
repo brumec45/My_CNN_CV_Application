@@ -106,5 +106,11 @@
     <CudaCompile Include="RELU_Activation_Kernel.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
+    <CudaCompile Include="TensorSum_Kernel.cu">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
+    <CudaCompile Include="TensorSum_Kernel.cuh">
+      <Filter>Header Files</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>

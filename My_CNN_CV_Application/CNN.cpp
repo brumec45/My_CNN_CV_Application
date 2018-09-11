@@ -131,16 +131,19 @@ void CNN::AddConvLayer(TensorDimension firstLayerInputTensorDimension, TensorDim
 	Tensor* outputTensor = new Tensor(outputTensorDimension);
 	Conv_Layer_GPU* convLayerGPU = new Conv_Layer_GPU(inputTensor, outputTensor, kernelTensor, stride, padding, activationType, batchNormalization);
 
+	int outputFeatureDepth = outputTensor->GetChannels();
+	float * bias = new float[outputFeatureDepth];
+	this->weightsReader.GetBias(outputFeatureDepth, bias);
+	convLayerGPU->SetBias(bias);
+
 	if (batchNormalization)
 	{
-		int outputFeatureDepth = outputTensor->GetChannels();
-		float * bnBias = new float[outputFeatureDepth];
 		float * bnScales = new float[outputFeatureDepth];
 		float * estimatedMean = new float[outputFeatureDepth];
 		float * estimatedVariance = new float[outputFeatureDepth];
 
-		this->weightsReader.GetBatchNormalizationParameters(outputFeatureDepth, bnBias, bnScales, estimatedMean, estimatedVariance);
-		convLayerGPU->SetBatchNormalizationParameters(bnBias, bnScales, estimatedMean, estimatedVariance);
+		this->weightsReader.GetBatchNormalizationParameters(outputFeatureDepth, bnScales, estimatedMean, estimatedVariance);
+		convLayerGPU->SetBatchNormalizationParameters(bnScales, estimatedMean, estimatedVariance);
 	}
 
 	this->weightsReader.GetWeights(kernelTensor->GetTensorSize(), convLayerGPU->GetKernelTensorWeights());
@@ -165,19 +168,33 @@ void CNN::AddConvLayer(TensorDimension kernalTensorDimension, TensorDimension ou
 	Tensor* outputTensor = new Tensor(outputTensorDimension);
 	Conv_Layer_GPU* convLayerGPU = new Conv_Layer_GPU(inputTensor, outputTensor, kernelTensor, stride, padding, activationType, batchNormalization);
 
+	int outputFeatureDepth = outputTensor->GetChannels();
+	float * bias = new float[outputFeatureDepth];
+	this->weightsReader.GetBias(outputFeatureDepth, bias);
+	convLayerGPU->SetBias(bias);
+
 	if (batchNormalization)
 	{
-		int outputFeatureDepth = outputTensor->GetChannels();
-		float * bnBias = new float[outputFeatureDepth];
 		float * bnScales = new float[outputFeatureDepth];
 		float * estimatedMean = new float[outputFeatureDepth];
 		float * estimatedVariance = new float[outputFeatureDepth];
 
-		this->weightsReader.GetBatchNormalizationParameters(outputFeatureDepth, bnBias, bnScales, estimatedMean, estimatedVariance);
-		convLayerGPU->SetBatchNormalizationParameters(bnBias, bnScales, estimatedMean, estimatedVariance);
+		this->weightsReader.GetBatchNormalizationParameters(outputFeatureDepth, bnScales, estimatedMean, estimatedVariance);
+		convLayerGPU->SetBatchNormalizationParameters(bnScales, estimatedMean, estimatedVariance);
 	}
 
 	this->weightsReader.GetWeights(kernelTensor->GetTensorSize(), convLayerGPU->GetKernelTensorWeights());
+
+	/*if (batchNormalization == false)
+	{
+		float* p = convLayerGPU->GetKernelTensorWeights();
+		float t;
+		for (size_t i = 1024 - 1; i < 125 * 1024; i++)
+		{
+			t = p[i];
+		}
+	}*/
+	
 	//kernelTensor->InitKernelWeights();
 	//kernelTensor->SetKernelWeights(weights);
 	

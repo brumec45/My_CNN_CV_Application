@@ -34,7 +34,8 @@ public:
 	WeightsReader();
 	WeightsReader(char* weightsFileName);
 	void GetWeights(int weightsCount, float * weights);
-	void GetBatchNormalizationParameters(int previousConvLayerFeatureDepth, float * biases, float * scales, float * rollingMean, float * rollingVariance);
+	void GetBias(int previousConvLayerFeatureDepth, float * bias);
+	void GetBatchNormalizationParameters(int previousConvLayerFeatureDepth, float * scales, float * rollingMean, float * rollingVariance);
 	void SetFileName(char* weightsFileName);
 	void OpenFile(char* weightsFileName);
 	void CloseFile();

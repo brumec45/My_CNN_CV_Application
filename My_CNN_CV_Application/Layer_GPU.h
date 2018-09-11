@@ -2,6 +2,7 @@
 #include "Layer.h"
 #include "cuda.h"
 #include "RELU_Activation_Kernel.cuh"
+#include "TensorSum_Kernel.cuh"
 
 class Layer_GPU : public Layer {
 protected:

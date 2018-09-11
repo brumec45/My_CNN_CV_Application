@@ -63,24 +63,33 @@ void WeightsReader::GetWeights(int weightsCount, float * weights)
 	file.seekg(0, std::ios_base::beg);*/
 }
 
-void WeightsReader::GetBatchNormalizationParameters(int previousConvLayerFeatureDepth, float * bnBias, float * bnScales, float * estimatedMean, float * estimatedVariance)
+void WeightsReader::GetBias(int previousConvLayerFeatureDepth, float * bias)
 {
 	size_t parametersRead;
-	parametersRead = fread(bnBias, sizeof(float), previousConvLayerFeatureDepth, this->file);
+	parametersRead = fread(bias, sizeof(float), previousConvLayerFeatureDepth, this->file);
+	if (parametersRead != previousConvLayerFeatureDepth) {
+		fputs("Bias reading error: ", stderr); exit(3);
+	}
+}
+
+void WeightsReader::GetBatchNormalizationParameters(int previousConvLayerFeatureDepth, float * bnScales, float * estimatedMean, float * estimatedVariance)
+{
+	size_t parametersRead;
+	/*parametersRead = fread(bnBias, sizeof(float), previousConvLayerFeatureDepth, this->file);
 	if (parametersRead != previousConvLayerFeatureDepth) {
 		fputs("Batch normalization parameters reading error", stderr); exit(3);
-	}
+	}*/
 	parametersRead = fread(bnScales, sizeof(float), previousConvLayerFeatureDepth, this->file);
 	if (parametersRead != previousConvLayerFeatureDepth) {
-		fputs("Batch normalization parameters reading error", stderr); exit(3);
+		fputs("Batch normalization parameters reading error: ", stderr); exit(3);
 	}
 	parametersRead = fread(estimatedMean, sizeof(float), previousConvLayerFeatureDepth, this->file);
 	if (parametersRead != previousConvLayerFeatureDepth) {
-		fputs("Batch normalization parameters reading error", stderr); exit(3);
+		fputs("Batch normalization parameters reading error: ", stderr); exit(3);
 	}
 	parametersRead = fread(estimatedVariance, sizeof(float), previousConvLayerFeatureDepth, this->file);
 	if (parametersRead != previousConvLayerFeatureDepth) {
-		fputs("Batch normalization parameters reading error", stderr); exit(3);
+		fputs("Batch normalization parameters reading error: ", stderr); exit(3);
 	}
 
 	/*float t;

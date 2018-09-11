@@ -12,6 +12,7 @@ Layer::Layer(Tensor * inputTensor, Tensor * outputTensor)
 	this->outputTensor = outputTensor;
 	this->stride = 1;
 	this->padding = 0;
+	
 }
 
 Layer::Layer(Tensor *inputTensor, Tensor *outputTensor, int stride, int padding)

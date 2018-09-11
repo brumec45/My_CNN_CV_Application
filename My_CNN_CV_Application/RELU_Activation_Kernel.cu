@@ -25,12 +25,12 @@ __global__ void RELU_Kernel(float* tensor, int tensorSize)
 	}
 }
 
-void LeakyRELUActivation(float* tensor, int tensorSize) {
+void LeakyRELUActivation_GPU(float* tensor, int tensorSize) {
 	//vedno je deljivo z 512 (4)
 	Leaky_RELU_Kernel << <tensorSize / 512, 512 >> > (tensor, tensorSize);
 }
 
-void RELUActivation(float* tensor, int tensorSize) {
+void RELUActivation_GPU(float* tensor, int tensorSize) {
 	//vedno je deljivo z 512 (4)
 	RELU_Kernel << <tensorSize / 512, 512 >> > (tensor, tensorSize);
 }

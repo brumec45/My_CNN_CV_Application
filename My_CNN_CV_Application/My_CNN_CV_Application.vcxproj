@@ -182,6 +182,9 @@
     <ClInclude Include="MaxPool_Layer_GPU.h" />
     <ClInclude Include="Tensor.h" />
     <ClInclude Include="TensorDimension.h" />
+    <CudaCompile Include="TensorSum_Kernel.cuh">
+      <FileType>CppHeader</FileType>
+    </CudaCompile>
     <ClInclude Include="WeightsReader.h" />
   </ItemGroup>
   <ItemGroup>
@@ -191,6 +194,7 @@
     <CudaCompile Include="RELU_Activation_Kernel.cuh">
       <FileType>Document</FileType>
     </CudaCompile>
+    <CudaCompile Include="TensorSum_Kernel.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
