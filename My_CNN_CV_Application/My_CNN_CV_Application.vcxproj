@@ -180,8 +180,10 @@
     <ClInclude Include="Layer_GPU.h" />
     <ClInclude Include="MaxPool_Layer.h" />
     <ClInclude Include="MaxPool_Layer_GPU.h" />
+    <ClInclude Include="Output_Layer_GPU_Kernels.cuh" />
     <ClInclude Include="Tensor.h" />
     <ClInclude Include="TensorDimension.h" />
+    <CudaCompile Include="Output_Layer_GPU_Kernels.cu" />
     <CudaCompile Include="TensorSum_Kernel.cuh">
       <FileType>CppHeader</FileType>
     </CudaCompile>

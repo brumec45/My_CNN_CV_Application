@@ -98,6 +98,9 @@
     <ClInclude Include="BatchNormalization_Layer_GPU.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Output_Layer_GPU_Kernels.cuh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="RELU_Activation_Kernel.cuh">
@@ -111,6 +114,9 @@
     </CudaCompile>
     <CudaCompile Include="TensorSum_Kernel.cuh">
       <Filter>Header Files</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Output_Layer_GPU_Kernels.cu">
+      <Filter>Source Files</Filter>
     </CudaCompile>
   </ItemGroup>
 </Project>

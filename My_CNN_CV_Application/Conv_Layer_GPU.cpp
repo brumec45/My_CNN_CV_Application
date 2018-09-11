@@ -163,7 +163,8 @@ void Conv_Layer_GPU::Forward()
 	}
 	else
 	{
-		RELUActivation_GPU(this->outputGPUMemoryPointer, this->outputTensor->GetTensorSize());
+		//RELUActivation_GPU(this->outputGPUMemoryPointer, this->outputTensor->GetTensorSize());
+		WH_BoundingBox_Transform(this->outputGPUMemoryPointer, this->outputTensor->GetHeight(), this->outputTensor->GetWidth());
 		checkCUDA(cudaPeekAtLastError());
 	}
 }

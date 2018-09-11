@@ -5,7 +5,7 @@
 #include <chrono>
 #include <iostream>
 #include "WeightsReader.h"
-
+#include <math.h>
 
 using namespace std::chrono;
 
@@ -30,7 +30,7 @@ void fileReadTest() {
 }
 
 int main(int, char** argv)
-{
+{	
 	//CUDADeviceInfo();
 	Mat testImage = LoadImage("more_of_lenna.jpg");
 	Mat myBlob = cv::dnn::blobFromImage(testImage, 1, cv::Size(416, 416), cv::Scalar(0, 0, 0), true, false);
