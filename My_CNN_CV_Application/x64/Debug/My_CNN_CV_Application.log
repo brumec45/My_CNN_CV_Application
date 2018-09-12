@@ -1,19 +1,10 @@
 ﻿  Compiling CUDA source file Output_Layer_GPU_Kernels.cu...
   
   D:\Faks\Magisterij\Mag_delo\Aplikacija\My_CNN_CV_Application\My_CNN_CV_Application>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.2\bin\nvcc.exe" -gencode=arch=compute_30,code=\"sm_30,compute_30\" --use-local-env -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64" -x cu  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.2\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.2\include"  -G   --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile -cudart static  -g   -D_DEBUG -D_CONSOLE -D_UNICODE -DUNICODE -Xcompiler "/EHsc /W3 /nologo /Od /FS /Zi /RTC1 /MDd " -o x64\Debug\Output_Layer_GPU_Kernels.cu.obj "D:\Faks\Magisterij\Mag_delo\Aplikacija\My_CNN_CV_Application\My_CNN_CV_Application\Output_Layer_GPU_Kernels.cu" 
-D:/Faks/Magisterij/Mag_delo/Aplikacija/My_CNN_CV_Application/My_CNN_CV_Application/Output_Layer_GPU_Kernels.cu(48): warning : variable "cy" was declared but never referenced
-D:/Faks/Magisterij/Mag_delo/Aplikacija/My_CNN_CV_Application/My_CNN_CV_Application/Output_Layer_GPU_Kernels.cu(49): warning : variable "cx" was declared but never referenced
   Output_Layer_GPU_Kernels.cu
-D:/Faks/Magisterij/Mag_delo/Aplikacija/My_CNN_CV_Application/My_CNN_CV_Application/Output_Layer_GPU_Kernels.cu(67): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-D:/Faks/Magisterij/Mag_delo/Aplikacija/My_CNN_CV_Application/My_CNN_CV_Application/Output_Layer_GPU_Kernels.cu(75): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-  BatchNormalization_Layer_GPU.cpp
-  Generating Code...
-  Compiling...
-  main.cpp
-  MaxPool_Layer_GPU.cpp
-  Layer_GPU.cpp
-  Conv_Layer_GPU.cpp
-  CNN.cpp
-  Generating Code...
+d:\faks\magisterij\mag_delo\aplikacija\my_cnn_cv_application\my_cnn_cv_application\Output_Layer_GPU_Kernels.cuh(8): warning C4305: 'initializing': truncation from 'double' to 'float'
+D:/Faks/Magisterij/Mag_delo/Aplikacija/My_CNN_CV_Application/My_CNN_CV_Application/Output_Layer_GPU_Kernels.cu(103): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+D:/Faks/Magisterij/Mag_delo/Aplikacija/My_CNN_CV_Application/My_CNN_CV_Application/Output_Layer_GPU_Kernels.cu(110): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+D:/Faks/Magisterij/Mag_delo/Aplikacija/My_CNN_CV_Application/My_CNN_CV_Application/Output_Layer_GPU_Kernels.cu(117): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
   My_CNN_CV_Application.vcxproj -> D:\Faks\Magisterij\Mag_delo\Aplikacija\My_CNN_CV_Application\x64\Debug\My_CNN_CV_Application.exe
   My_CNN_CV_Application.vcxproj -> D:\Faks\Magisterij\Mag_delo\Aplikacija\My_CNN_CV_Application\x64\Debug\My_CNN_CV_Application.pdb (Full PDB)

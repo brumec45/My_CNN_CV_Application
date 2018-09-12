@@ -14,12 +14,12 @@ __global__ void XY_BoundingBox_Coordinates_Transform_Kernel(float* input, int in
 {
 	int threadIndex = (blockIdx.x + blockIdx.y * gridDim.x) * blockDim.x + threadIdx.x;
 	int tensorXYSize = inputHeight * inputWidth;
-	int tensorSize = XYCoordinatesCount * tensorXYSize;
+	int tensorSize = boundingBoxesPerGridCell * tensorXYSize;
 	
 
 	if (threadIndex < tensorSize)
 	{
-		int threadDepthIndex = threadIndex % XYCoordinatesCount;
+		int threadDepthIndex = threadIndex % boundingBoxesPerGridCell;
 		//int threadDepthIndexY = (threadIndex % XYCoordinatesCount) + 1;
 		int threadXYIndex = threadIndex % tensorXYSize;
 		int cy = threadXYIndex / inputWidth;
@@ -28,50 +28,92 @@ __global__ void XY_BoundingBox_Coordinates_Transform_Kernel(float* input, int in
 		//tensor[threadDepthIndex * tensorXYSize + threadXYIndex] = threadDepthIndex;
 		input[threadDepthIndex * 4 * tensorXYSize + threadXYIndex] = (cx + Sigmoid(input[threadDepthIndex * 4 * tensorXYSize + threadXYIndex])) * downsampleFactor;
 		input[(threadDepthIndex * 4 + 1) * tensorXYSize + threadXYIndex] = (cy + Sigmoid(input[(threadDepthIndex * 4 + 1) * tensorXYSize + threadXYIndex])) * downsampleFactor;
-		//input[threadDepthIndex * 4 * tensorXYSize + threadXYIndex] = threadDepthIndex * 4 * tensorXYSize + threadXYIndex;
-		//input[(threadDepthIndex * 4 + 1) * tensorXYSize + threadXYIndex] = (threadDepthIndex * 4 + 1) * tensorXYSize + threadXYIndex;
-		//input[threadDepthIndex * 4 * tensorXYSize + threadXYIndex] = cx;
-		//input[(threadDepthIndex * 4 + 1) * tensorXYSize + threadXYIndex] = cy;
+		//input[threadDepthIndex * 4 * tensorXYSize + threadXYIndex] = 1;
+		//input[(threadDepthIndex * 4 + 1) * tensorXYSize + threadXYIndex] = 1;
 	}
 }
 __global__ void WH_BoundingBox_Transform_Kernel(float* input, int inputHeight, int inputWidth) 
 {
 	int threadIndex = (blockIdx.x + blockIdx.y * gridDim.x) * blockDim.x + threadIdx.x;
 	int tensorXYSize = inputHeight * inputWidth;
-	int tensorSize = WHCoordinatesCount * tensorXYSize;
+	int tensorSize = boundingBoxesPerGridCell * tensorXYSize;
 
 	if (threadIndex < tensorSize)
 	{
-		int threadDepthIndex = threadIndex % XYCoordinatesCount;
+		int threadDepthIndex = threadIndex % boundingBoxesPerGridCell;
 		//int threadDepthIndexY = (threadIndex % XYCoordinatesCount) + 1;
 		int threadXYIndex = threadIndex % tensorXYSize;
-		int cy = threadXYIndex / inputWidth;
-		int cx = threadXYIndex % inputWidth;
-
+		
 		//tensor[threadDepthIndex * tensorXYSize + threadXYIndex] = threadDepthIndex;
 		input[(threadDepthIndex * 4 + 2) * tensorXYSize + threadXYIndex] = exp(input[(threadDepthIndex * 4 + 2) * tensorXYSize + threadXYIndex]) *
 			anchors_416[2 * threadDepthIndex] * downsampleFactor;
 		input[(threadDepthIndex * 4 + 3) * tensorXYSize + threadXYIndex] = exp(input[(threadDepthIndex * 4 + 3) * tensorXYSize + threadXYIndex]) *
 			anchors_416[2 * threadDepthIndex + 1] * downsampleFactor;
-		//input[(threadDepthIndex * 4 + 2) * tensorXYSize + threadXYIndex] = anchors_416[2 * threadDepthIndex];
-		//input[(threadDepthIndex * 4 + 3) * tensorXYSize + threadXYIndex] = anchors_416[2 * threadDepthIndex + 1];
-	}
+		//input[(threadDepthIndex * 4 + 2) * tensorXYSize + threadXYIndex] = anchors_416[2 * threadDepthIndex] = 1;
+		//input[(threadDepthIndex * 4 + 3) * tensorXYSize + threadXYIndex] = anchors_416[2 * threadDepthIndex + 1] = 1;
 
+		input[(20 + threadDepthIndex) * tensorXYSize + threadXYIndex] = Sigmoid(input[(20 + threadDepthIndex) * tensorXYSize + threadXYIndex]);
+		//input[(20 + threadDepthIndex) * tensorXYSize + threadXYIndex] = 2;
+	}
+}
+
+__global__ void Softmax_Kernel(float* input, int classesCount, int inputHeight, int inputWidth)
+{
+	int threadIndex = (blockIdx.x + blockIdx.y * gridDim.x) * blockDim.x + threadIdx.x;
+	int tensorXYSize = inputHeight * inputWidth;
+	int tensorSize = boundingBoxesPerGridCell * tensorXYSize;
+
+	if (threadIndex < tensorSize)
+	{
+		int threadDepthIndex = threadIndex % boundingBoxesPerGridCell;
+		int threadXYIndex = threadIndex % tensorXYSize;
+		float maxClassProbability = FLOAT_MIN;
+
+		for (size_t i = 0; i < classesCount; i++)
+		{
+			float classProbability = input[(25 + threadDepthIndex * classesCount + i) * tensorXYSize + threadXYIndex];
+
+			if (classProbability > maxClassProbability)
+			{
+				maxClassProbability = classProbability;
+			}
+		}
+
+		float classProbabilitiesSum = 0;
+		for (size_t i = 0; i < classesCount; i++)
+		{
+			float exponent = exp(input[(25 + threadDepthIndex * classesCount + i) * tensorXYSize + threadXYIndex] - maxClassProbability);
+			classProbabilitiesSum += exponent;
+			input[(25 + threadDepthIndex * classesCount + i) * tensorXYSize + threadXYIndex] = exponent;
+		}
+
+		for (size_t i = 0; i < classesCount; i++)
+		{
+			input[(25 + threadDepthIndex * classesCount + i) * tensorXYSize + threadXYIndex] /= classProbabilitiesSum;
+			//input[(25 + threadDepthIndex * classesCount + i) * tensorXYSize + threadXYIndex] = i;
+			//input[(25 + threadDepthIndex * classesCount + i) * tensorXYSize + threadXYIndex] = 3;
+		}
+	}
 }
 
 
 void WH_BoundingBox_Transform(float* input, int inputHeight, int inputWidth) 
 {
-	int WHCoordinatesCount = 5;
-	int tensorSize = WHCoordinatesCount * inputHeight * inputWidth;
+	int tensorSize = boundingBoxesPerGridCell * inputHeight * inputWidth;
 	int gridXDim = ceil(tensorSize / 512.0);
 	WH_BoundingBox_Transform_Kernel << <gridXDim, 512 >> > (input, inputHeight, inputWidth);
 }
 
-void Output_Transform_GPU(float* input, int inputHeight, int inputWidth)
+void XY_BoundingBox_Coordinates_Transform(float* input, int inputHeight, int inputWidth)
 {
-	int XYCoordinatesCount = 5;
-	int tensorSize = XYCoordinatesCount * inputHeight * inputWidth;
+	int tensorSize = boundingBoxesPerGridCell * inputHeight * inputWidth;
 	int gridXDim = ceil(tensorSize / 512.0);
 	XY_BoundingBox_Coordinates_Transform_Kernel << <gridXDim, 512 >> > (input, inputHeight, inputWidth);
+}
+
+void Softmax_GPU(float* input, int classesCount, int inputHeight, int inputWidth)
+{
+	int tensorSize = boundingBoxesPerGridCell * inputHeight * inputWidth;
+	int gridXDim = ceil(tensorSize / 512.0);
+	Softmax_Kernel << <gridXDim, 512 >> > (input, classesCount, inputHeight, inputWidth);
 }
